@@ -111,8 +111,10 @@ const woocv = new Vue({
 			
 			let sortedArr = [];
 			fieldIds.forEach(element => {
-				let field = woocv.woocvFields.find(el => el['id'] === element);
-				sortedArr.push(field.id);
+				let field = woocv.woocvFields.find(el => el['id'] === element.toString());
+				if (field !== undefined) {
+					sortedArr.push(field.id);
+				}
 			});
 
 			this.woocvFields.sort(function (a, b) {
@@ -121,19 +123,19 @@ const woocv = new Vue({
 
 		},
 		makeSortableFieldItems: function (fid) { 
-			let fieldObj = this.woocvFields.find(el => el['id'] === fid);
+			let fieldObj = this.woocvFields.find(el => el['id'] === fid.toString());
 
 			if (fieldObj !== undefined) {
 				let fields = jQuery(".wcv_filed[data-id="+fid+"]").find('.woocv_filed_items').children('.woocv_filed_item');
-						
+				
 				let fieldIds = [];
 				jQuery.each(fields, function () { 
 					fieldIds.push(jQuery(this).data('id'));
 				});
-				
 				let sortedArr = [];
 				fieldIds.forEach(element => {
-					let field = fieldObj.fieldsData.find(el => el['id'] === element);
+					let field = fieldObj.fieldsData.find(el => el['id'] === element.toString());
+					
 					if (field !== undefined) {
 						sortedArr.push(field.id);
 					}
@@ -194,6 +196,9 @@ const woocv = new Vue({
 					nonce: admin_ajax.nonce,
 					data: data,
 					variation_id: admin_ajax.variation_id
+				},
+				beforeSend: () => {
+					woocv.isDisabled = true;
 				},
 				dataType: "json",
 				success: function (response) {
