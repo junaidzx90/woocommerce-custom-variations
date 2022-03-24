@@ -36,6 +36,7 @@ class Woocv_Activator {
 		$woocv_variations = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}woocv_variations` (
 			`variation_id` INT NOT NULL AUTO_INCREMENT,
 			`variation_title` VARCHAR(255) NOT NULL,
+			`products` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 			`product_ids` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 			`show_infront` VARCHAR(20) NOT NULL,
 			`fields_data` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,

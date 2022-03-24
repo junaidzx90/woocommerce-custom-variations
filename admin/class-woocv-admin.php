@@ -235,15 +235,52 @@ class Woocv_Admin {
 	}
 
 	function get_woocv_form_data(){
-		if(!wp_verify_nonce( $_POST['nonce'], 'woocvnonce' )){
+		if(!wp_verify_nonce( $_GET['nonce'], 'woocvnonce' )){
 			die("Invalid request!");
 		}
 
-		if(isset($_POST['variation_id']) && !empty($_POST['variation_id'])){
-			$variation_id = intval($_POST['variation_id']);
+		if(isset($_GET['variation_id']) && !empty($_GET['variation_id'])){
+			$variation_id = intval($_GET['variation_id']);
+			global $wpdb;
+			$results = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}woocv_variations WHERE variation_id = $variation_id");
+			if($results){
+				$variation_title = $results->variation_title;
+				$products = null;
+				if($results->products){
+					$products = unserialize(base64_decode($results->products));
+				}
+				$switch = $results->show_infront;
+				switch ($switch) {
+					case 'true':
+						$switch = true;
+						break;
+					case 'false':
+						$switch = false;
+						break;
+					default:
+						$switch = false;
+						break;
+				}
+				$fields_data = null;
+				if($results->fields_data){
+					$fields_data = unserialize(base64_decode($results->fields_data));
+				}
+
+				$data = [
+					'variation_title' => $variation_title,
+					'products' => $products,
+					'switch' => $switch,
+					'fields_data' => $fields_data
+				];
+				echo json_encode(array("success" => $data));
+				die;
+			}
+
+			echo json_encode(array("error" => "No variation"));
+			die;
 		}
 
-		echo json_encode(array("error" => "Eroor"));
+		echo json_encode(array("error" => "No variation"));
 		die;
 	}
 
@@ -252,12 +289,63 @@ class Woocv_Admin {
 			die("Invalid request!");
 		}
 		
+		global $wpdb;
 		if(isset($_POST['data'])){
+			$data = $_POST['data'];
+
+			$field_title = stripcslashes(sanitize_text_field( $data['title'] ));
+			$switch = $data['switch'];
+
+			$products = $data['products'];
+			$product_ids = [];
+			if(is_array($products)){
+				if(array_key_exists('data', $products)){
+					foreach($products['data'] as $product_id){
+						$product_ids[] = intval($product_id);
+					} 
+				}
+
+				$products = serialize($products);
+				$products = base64_encode($products);
+			}
+
+			$fields = $data['fields'];
+			if(is_array($fields)){
+				$fields = serialize($fields);
+				$fields = base64_encode($fields);
+			}
+			
 			if(isset($_POST['variation_id']) && !empty($_POST['variation_id'])){
 				// Update
 				$variation_id = intval($_POST['variation_id']);
+				$wpdb->update($wpdb->prefix.'woocv_variations', array(
+					'variation_title' => $field_title,
+					'products' => $products,
+					'product_ids' => serialize($product_ids),
+					'show_infront' => $switch,
+					'fields_data' => $fields,
+				), array('variation_id' => $variation_id), array('%s', '%s', '%s', '%s', '%s'), array('%d'));
+
+				echo json_encode(array("reload" => 'Success' ));
+				die;
+				
 			}else{
 				// Insert
+				$wpdb->insert($wpdb->prefix.'woocv_variations', array(
+					'variation_title' => $field_title,
+					'products' => $products,
+					'product_ids' => serialize($product_ids),
+					'show_infront' => $switch,
+					'fields_data' => $fields,
+					'create_date' => date("d/m/y h:i A")
+				), array('%s', '%s', '%s', '%s', '%s','%s'));
+
+				if(!is_wp_error( $wpdb )){
+					$lastid = $wpdb->insert_id;
+
+					echo json_encode(array("redirect" => admin_url( "admin.php?page=variations&action=edit&variation=$lastid" )));
+					die;
+				}
 			}
 		}
 

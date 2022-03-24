@@ -1,20 +1,21 @@
 const woocv = new Vue({
 	el: "#woocv",
 	data: {
+		isDisabled: true,
+		variation_title: '',
 		variation_switch: '',
 		woocvFields: [],
 		productSelection: {
 			type: "single",
-			data: [],
-			single: ""
+			data: [""],
 		}
 	},
 	methods: {
 		changeProduct: function () {
-			this.productSelection.data = [];
-			this.productSelection.single = "";
+			this.productSelection.data = [""];
 		},
-		add_woocv_field: function () {
+		add_woocv_field: function (event) {
+			event.preventDefault();
 			let woocv_field = {
 				id: (new Date()).getTime(),
 				title: "Untitled",
@@ -22,7 +23,8 @@ const woocv = new Vue({
 			}
 			this.woocvFields.push(woocv_field);
 		},
-		add_woocv_field_item: function (id) {
+		add_woocv_field_item: function (id, event) {
+			event.preventDefault();
 			let field = this.woocvFields.find(el => el['id'] === id);
 			if (field !== undefined) {
 				let fieldItem = {
@@ -175,12 +177,15 @@ const woocv = new Vue({
 				});
 			}
 		},
-		save_woocv_form_data: function () {
-			let data = [
-				this.variation_switch,
-				this.woocvFields,
-				this.productSelection
-			]
+		save_woocv_form_data: function (event) {
+			event.preventDefault();
+			let data = {
+				title: this.variation_title,
+				switch: this.variation_switch,
+				products: this.productSelection,
+				fields: this.woocvFields
+			}
+
 			jQuery.ajax({
 				type: "post",
 				url: admin_ajax.ajaxurl,
@@ -192,7 +197,12 @@ const woocv = new Vue({
 				},
 				dataType: "json",
 				success: function (response) {
-					
+					if (response.redirect) {
+						location.href = response.redirect;
+					}
+					if (response.reload) {
+						location.reload();
+					}
 				}
 			});
 		}
@@ -212,7 +222,14 @@ const woocv = new Vue({
 				},
 				dataType: "json",
 				success: function (response) {
-					
+					if (response.success) {
+						let data = response.success;
+						woocv.woocvFields = data.fields_data;
+						woocv.productSelection = data.products;
+						woocv.variation_switch = data.switch;
+						woocv.variation_title = data.variation_title;
+					}
+					woocv.isDisabled = false;
 				}
 			});
 		}

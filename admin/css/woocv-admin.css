@@ -257,3 +257,24 @@ input#inputColorshow {
   .woocv_slider.round:before {
     border-radius: 50%;
   }
+
+  div#lr-loader-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+    background-color: #bbbbbb2b;
+    z-index: 9999;
+}
