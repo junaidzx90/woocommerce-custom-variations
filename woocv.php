@@ -1,5 +1,5 @@
 <?php
-
+ob_start();
 /**
  * The plugin bootstrap file
  *
@@ -36,7 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'WOOCV_VERSION', '1.0.0' );
-
+date_default_timezone_set(get_option('timezone_string')?get_option('timezone_string'):'UTC');
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-woocv-activator.php
@@ -63,7 +63,8 @@ register_deactivation_hook( __FILE__, 'deactivate_woocv' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-woocv.php';
-
+require plugin_dir_path( __FILE__ ) . 'includes/class-read-color.php';
+$readColor = new ColorInterpreter;
 /**
  * Begins execution of the plugin.
  *

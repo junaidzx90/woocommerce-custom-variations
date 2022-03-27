@@ -138,48 +138,69 @@ class Woocv_Admin {
 		// options
 		add_settings_section( 'custom_variation_settings_section', '', '', 'custom_variation_settings_page' );
 
-		// Font size of buttons
-		add_settings_field( 'custom_variation_font_size_of_buttons', 'Font size of buttons', [$this,'custom_variation_font_size_of_sen_uttons'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_font_size_of_buttons');
-		// Font size of tab items
-		add_settings_field( 'custom_variation_font_size_of_tabs', 'Font size of tab items', [$this,'custom_variation_font_size_of_tabs_cb'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_font_size_of_tabs');
-		// Font color of buttons
-		add_settings_field( 'custom_variation_font_color_of_buttons', 'Font color of buttons', [$this,'custom_variation_font_color_of_buttons_cb'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_font_color_of_buttons');
-		// Font color of buttons hover
-		add_settings_field( 'custom_variation_font_color_of_buttons_hover', 'Font color of buttons hover', [$this,'custom_variation_font_color_of_buttons_hover_cb'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_font_color_of_buttons_hover');
-		// Font color of tab items
-		add_settings_field( 'custom_variation_font_color_of_tabs', 'Font color of tab items', [$this,'custom_variation_font_color_of_tabs_cb'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_font_color_of_tabs');
-		// Buttons background color
-		add_settings_field( 'custom_variation_buttons_bg', 'Buttons background color', [$this,'custom_variation_buttons_bg_cb'], 'custom_variation_settings_page', 'custom_variation_settings_section');
-		register_setting( 'custom_variation_settings_section', 'custom_variation_buttons_bg');
+		// Font size of title
+		add_settings_field( 'font_size_of_title', 'Font size of title', [$this,'fn_font_size_of_title'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'font_size_of_title');
+		// Color of title
+		add_settings_field( 'color_of_title', 'Color of title', [$this,'fn_color_of_title'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'color_of_title');
+		// Fields name font size
+		add_settings_field( 'fields_name_font_size', 'Fields name font size', [$this,'fn_fields_name_font_size'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'fields_name_font_size');
+		// Fields name font size
+		add_settings_field( 'fields_name_font_color', 'Fields name font color', [$this,'fn_fields_name_font_color'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'fields_name_font_color');
+		// Fields name font weight
+		add_settings_field( 'fields_name_font_weight', 'Fields name font weight', [$this,'fn_fields_name_font_weight'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'fields_name_font_weight');
+		// Fields background
+		add_settings_field( 'fields_background', 'Fields background', [$this,'fn_fields_background'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'fields_background');
+		// Decoration Color
+		add_settings_field( 'field_decoration_color', 'Decoration Color', [$this,'fn_field_decoration_color'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'field_decoration_color');
+		// Calculate button color
+		add_settings_field( 'calc_btn_color', 'Calculate button color', [$this,'fn_calc_btn_color'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'calc_btn_color');
+		// Calculate button bg color
+		add_settings_field( 'calc_btn_bg', 'Calculate button background', [$this,'fn_calc_btn_bg'], 'custom_variation_settings_page', 'custom_variation_settings_section');
+		register_setting( 'custom_variation_settings_section', 'calc_btn_bg');
 	}
 
-	function custom_variation_font_size_of_sen_uttons(){ // Font size of buttons
-		echo '<input type="number" name="custom_variation_font_size_of_buttons" value="'.get_option('custom_variation_font_size_of_buttons').'" placeholder="14px" id="custom_variation_font_size_of_buttons">';
+	function fn_font_size_of_title(){
+		echo '<input type="number" name="font_size_of_title" value="'.get_option('font_size_of_title').'" placeholder="18px" id="font_size_of_title">';
 	}
 
-	function custom_variation_font_size_of_tabs_cb(){ // Font size of tab items
-		echo '<input type="number" name="custom_variation_font_size_of_tabs" value="'.get_option('custom_variation_font_size_of_tabs').'" placeholder="14px" id="custom_variation_font_size_of_tabs">';
+	function fn_color_of_title(){
+		echo '<input type="color" name="color_of_title" value="'.((get_option('color_of_title')) ? get_option('color_of_title') : '#424242').'" id="color_of_title">';
 	}
 
-	function custom_variation_font_color_of_buttons_cb(){ // Font color of buttons
-		echo '<input type="color" name="custom_variation_font_color_of_buttons" value="'.(get_option('custom_variation_font_color_of_buttons')?get_option('custom_variation_font_color_of_buttons'):'#198fd9').'" id="custom_variation_font_color_of_buttons">';
+	function fn_fields_name_font_size(){
+		echo '<input type="number" name="fields_name_font_size" placeholder="14" value="'.get_option('fields_name_font_size').'" id="fields_name_font_size">';
 	}
 
-	function custom_variation_font_color_of_buttons_hover_cb(){ // Font color of buttons
-		echo '<input type="color" name="custom_variation_font_color_of_buttons_hover" value="'.(get_option('custom_variation_font_color_of_buttons_hover')?get_option('custom_variation_font_color_of_buttons_hover'):'#d6d6d6').'" id="custom_variation_font_color_of_buttons_hover">';
+	function fn_fields_name_font_color(){
+		echo '<input type="color" name="fields_name_font_color" value="'.((get_option('fields_name_font_color')) ? get_option('fields_name_font_color') : '#6f6f6e').'" id="fields_name_font_color">';
+	}
+	
+	function fn_fields_name_font_weight(){
+		echo '<input type="number" name="fields_name_font_weight" placeholder="600" value="'.get_option('fields_name_font_weight').'" id="fields_name_font_weight">';
 	}
 
-	function custom_variation_font_color_of_tabs_cb(){ // Font color of tab items
-		echo '<input type="color" name="custom_variation_font_color_of_tabs" value="'.(get_option('custom_variation_font_color_of_tabs')?get_option('custom_variation_font_color_of_tabs'):'#545454').'" id="custom_variation_font_color_of_tabs">';
+	function fn_fields_background(){
+		echo '<input type="color" name="fields_background" value="'.((get_option('fields_background')) ? get_option('fields_background') : '#f6f6f6').'" id="fields_background">';
 	}
 
-	function custom_variation_buttons_bg_cb(){ // Font color of tab items
-		echo '<input type="color" name="custom_variation_buttons_bg" value="'.(get_option('custom_variation_buttons_bg')?get_option('custom_variation_buttons_bg'):'#f1f1f1').'" id="custom_variation_buttons_bg">';
+	function fn_field_decoration_color(){
+		echo '<input type="color" name="field_decoration_color" value="'.((get_option('field_decoration_color')) ? get_option('field_decoration_color') : '#7ea565').'" id="field_decoration_color">';
+	}
+
+	function fn_calc_btn_color(){
+		echo '<input type="color" name="calc_btn_color" value="'.((get_option('calc_btn_color')) ? get_option('calc_btn_color') : '#6f6f72').'" id="calc_btn_color">';
+	}
+
+	function fn_calc_btn_bg(){
+		echo '<input type="color" name="calc_btn_bg" value="'.((get_option('calc_btn_bg')) ? get_option('calc_btn_bg') : '#f6f6f6').'" id="calc_btn_bg">';
 	}
 
 	function custom_variaton_html(){
@@ -217,21 +238,32 @@ class Woocv_Admin {
 				<h3>Variation Customize</h3>
 				<hr>
 				<form action="options.php" method="post">
-					<table class="widefat" style="width: 38%">
 					<?php
 					settings_fields( 'custom_variation_settings_section' );
-					do_settings_fields( 'custom_variation_settings_page', 'custom_variation_settings_section' );
+					do_settings_sections( 'custom_variation_settings_page' );
 					?>
-					</table>
-
 					<p>
 						<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
+						<a class="button-secondary" href="<?php echo admin_url( 'admin.php?page=variation-settings&action=woocv-reset' ) ?>">Reset</a>
 					</p>
-					
 				</form>
 			</div>
 		</div>
 		<?php
+
+		if(isset($_GET['page']) && $_GET['page'] === 'variation-settings' && isset($_GET['action']) && $_GET['action'] === 'woocv-reset'){
+			delete_option( 'font_size_of_title' );
+			delete_option( 'color_of_title' );
+			delete_option( 'fields_name_font_size' );
+			delete_option( 'fields_name_font_color' );
+			delete_option( 'fields_name_font_weight' );
+			delete_option( 'fields_background' );
+			delete_option( 'field_decoration_color' );
+			delete_option( 'calc_btn_color' );
+			delete_option( 'calc_btn_bg' );
+
+			wp_safe_redirect( admin_url( 'admin.php?page=variation-settings' ) );
+		}
 	}
 
 	function get_woocv_form_data(){
@@ -298,9 +330,11 @@ class Woocv_Admin {
 
 			$products = $data['products'];
 			$product_ids = [];
+			$category = $products['category'];
+
 			if(is_array($products)){
-				if(array_key_exists('data', $products)){
-					foreach($products['data'] as $product_id){
+				if(array_key_exists('products', $products)){
+					foreach($products['products'] as $product_id){
 						$product_ids[] = intval($product_id);
 					} 
 				}
@@ -322,9 +356,10 @@ class Woocv_Admin {
 					'variation_title' => $field_title,
 					'products' => $products,
 					'product_ids' => serialize($product_ids),
+					'category' => $category,
 					'show_infront' => $switch,
 					'fields_data' => $fields,
-				), array('variation_id' => $variation_id), array('%s', '%s', '%s', '%s', '%s'), array('%d'));
+				), array('variation_id' => $variation_id), array('%s', '%s', '%s', '%s', '%s', '%s'), array('%d'));
 
 				echo json_encode(array("reload" => 'Success' ));
 				die;
@@ -335,10 +370,11 @@ class Woocv_Admin {
 					'variation_title' => $field_title,
 					'products' => $products,
 					'product_ids' => serialize($product_ids),
+					'category' => $category,
 					'show_infront' => $switch,
 					'fields_data' => $fields,
 					'create_date' => date("d/m/y h:i A")
-				), array('%s', '%s', '%s', '%s', '%s','%s'));
+				), array('%s', '%s', '%s', '%s', '%s', '%s','%s'));
 
 				if(!is_wp_error( $wpdb )){
 					$lastid = $wpdb->insert_id;

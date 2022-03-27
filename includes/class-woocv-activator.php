@@ -38,6 +38,7 @@ class Woocv_Activator {
 			`variation_title` VARCHAR(255) NOT NULL,
 			`products` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 			`product_ids` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+			`category` INT NOT NULL,
 			`show_infront` VARCHAR(20) NOT NULL,
 			`fields_data` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
 			`create_date` DATETIME NOT NULL,

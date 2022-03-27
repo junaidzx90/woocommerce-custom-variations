@@ -66,9 +66,9 @@ div#variationFields h3 {
     display: flex;
     gap: 20px;
 }
-.wcv_input select#wcv_product_selection {
+.wcv_input select#wcv_product_selection, select#variation_product_category {
     padding-right: 28px;
-    width: 20%;
+    min-width: 20%;
     height: fit-content;
 }
 .products_list{
@@ -241,10 +241,10 @@ input#inputColorshow {
     transition: .4s;
   }
   input:checked + .woocv_slider {
-    background-color: #2196F3;
+    background-color: #4caf50;
   }
   input:focus + .woocv_slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #4caf50;
   }
   input:checked + .woocv_slider:before {
     -webkit-transform: translateX(26px);
@@ -277,4 +277,54 @@ input#inputColorshow {
             backdrop-filter: blur(2px);
     background-color: #bbbbbb2b;
     z-index: 9999;
+}
+.available_colors {
+    padding: 5px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+.available_colors p.availablecolor_heading {
+    margin: 0;
+    font-weight: 500;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+.available_colors .woocv_colors {
+    padding: 10px 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.woocv_colors div.woocv_color {
+    padding: 12px 20px;
+    display: inline-block;
+    border-radius: 3px;
+    border: 1px solid green;
+    position: relative;
+}
+
+.colorSelectionBox {
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+button.colorAddbtn {
+    cursor: pointer;
+}
+span.woocv_color_remove {
+    position: absolute;
+    font-size: 18px;
+    line-height: 18px;
+    right: -10px;
+    top: -9px;
+    color: darkred;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0;
+}
+.woocv_colors div.woocv_color:hover .woocv_color_remove {
+    opacity: 1;
+    transition: .3s;
 }

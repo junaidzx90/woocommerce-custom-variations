@@ -6,13 +6,15 @@ const woocv = new Vue({
 		variation_switch: '',
 		woocvFields: [],
 		productSelection: {
-			type: "single",
-			data: [""],
+			type: "products",
+			category: "",
+			products: [],
 		}
 	},
 	methods: {
 		changeProduct: function () {
-			this.productSelection.data = [""];
+			this.productSelection.category = "";
+			this.productSelection.products = [];
 		},
 		add_woocv_field: function (event) {
 			event.preventDefault();
@@ -30,35 +32,41 @@ const woocv = new Vue({
 				let fieldItem = {
 					id: (new Date()).getTime(),
 					type: "unselected",
-					label: "",
+					label: "Untitled",
 					placeholder: "",
 					color: "#000000",
+					availableColors: [],
 					price: "",
 					longtxt: ""
 				}
 				field.fieldsData.push(fieldItem);
 			}
 		},
-		get_itemTypeFullText: function (type) {
-			switch (type) {
-				case 'unselected':
-					return 'Unselected';
-					break;
-				case 'empty_input':
-					return 'Empty Input';
-					break;
-				case 'color_input':
-					return 'Color Input';
-					break;
-				case 'button_show':
-					return 'Button Show';
-					break;
-				case 'color_show':
-					return 'Color Show';
-					break;
-				case 'longtext_field':
-					return 'Long Text';
-					break;
+		addAvailableColor: function(fid, fiid, event){
+			event.preventDefault();
+			let field = this.woocvFields.find(el => el['id'] === fid);
+			if (field !== undefined) {
+				let fieldItem = field.fieldsData.find(el => el['id'] === fiid);
+				if (fieldItem !== undefined) {
+					let selectedColor = jQuery(event.target).parent().find(".newColor").val();
+					let colorInp = {
+						id: (new Date()).getTime(),
+						value: selectedColor
+					}
+					fieldItem.availableColors.push(colorInp);
+				}
+			}
+
+		},
+		remove_availableColor: function(fid, fiid, cid){
+			let field = this.woocvFields.find(el => el['id'] === fid);
+			if (field !== undefined) {
+				let fieldItem = field.fieldsData.find(el => el['id'] === fiid);
+				if (fieldItem !== undefined) {
+					fieldItem.availableColors = fieldItem.availableColors.filter(function( obj ) {
+						return obj.id !== cid;
+					});
+				}
 			}
 		},
 		changeFieldType: function (fid, fiid) {
@@ -66,7 +74,7 @@ const woocv = new Vue({
 			if (field !== undefined) {
 				let fieldItem = field.fieldsData.find(el => el['id'] === fiid);
 				if (fieldItem !== undefined) {
-					fieldItem.label = "";
+					fieldItem.label = "Untitled";
 					fieldItem.placeholder = "";
 					fieldItem.color = "#000000";
 					fieldItem.price = "";
@@ -181,63 +189,81 @@ const woocv = new Vue({
 		},
 		save_woocv_form_data: function (event) {
 			event.preventDefault();
-			let data = {
-				title: this.variation_title,
-				switch: this.variation_switch,
-				products: this.productSelection,
-				fields: this.woocvFields
-			}
 
-			jQuery.ajax({
-				type: "post",
-				url: admin_ajax.ajaxurl,
-				data: {
-					action: "save_woocv_data",
-					nonce: admin_ajax.nonce,
-					data: data,
-					variation_id: admin_ajax.variation_id
-				},
-				beforeSend: () => {
-					woocv.isDisabled = true;
-				},
-				dataType: "json",
-				success: function (response) {
-					if (response.redirect) {
-						location.href = response.redirect;
-					}
-					if (response.reload) {
-						location.reload();
-					}
+			if(this.variation_title !== "" && this.woocvFields.length > 0){
+				let data = {
+					title: this.variation_title,
+					switch: this.variation_switch,
+					products: this.productSelection,
+					fields: this.woocvFields
 				}
-			});
+	
+				jQuery.ajax({
+					type: "post",
+					url: admin_ajax.ajaxurl,
+					data: {
+						action: "save_woocv_data",
+						nonce: admin_ajax.nonce,
+						data: data,
+						variation_id: admin_ajax.variation_id
+					},
+					beforeSend: () => {
+						woocv.isDisabled = true;
+					},
+					dataType: "json",
+					success: function (response) {
+						if (response.redirect) {
+							location.href = response.redirect;
+						}
+						if (response.reload) {
+							location.reload();
+						}
+					}
+				});
+			}else{
+				alert("Required fields are missing!");
+			}
 		}
 	},
 	updated: function () { 
 		this.sortableData();
 	},
 	mounted: function () {
-		if (admin_ajax.variation_id !== null) {
-			jQuery.ajax({
-				type: "get",
-				url: admin_ajax.ajaxurl,
-				data: {
-					action: "get_woocv_form_data",
-					nonce: admin_ajax.nonce,
-					variation_id: admin_ajax.variation_id
-				},
-				dataType: "json",
-				success: function (response) {
-					if (response.success) {
-						let data = response.success;
-						woocv.woocvFields = data.fields_data;
-						woocv.productSelection = data.products;
-						woocv.variation_switch = data.switch;
-						woocv.variation_title = data.variation_title;
+		setTimeout(() => {
+			if (admin_ajax.variation_id !== null) {
+				jQuery.ajax({
+					type: "get",
+					url: admin_ajax.ajaxurl,
+					data: {
+						action: "get_woocv_form_data",
+						nonce: admin_ajax.nonce,
+						variation_id: admin_ajax.variation_id
+					},
+					dataType: "json",
+					success: function (response) {
+						if (response.success) {
+							let data = response.success;
+
+							data.fields_data.forEach(element => {
+								let woocv_field = {
+									id: element.id,
+									title: element.title,
+									fieldsData: ((element.fieldsData) ? element.fieldsData : [] )
+								}
+								woocv.woocvFields.push(woocv_field);
+							})
+
+							woocv.productSelection = data.products;
+							woocv.variation_switch = data.switch;
+							woocv.variation_title = data.variation_title;
+						}
+						woocv.isDisabled = false;
 					}
-					woocv.isDisabled = false;
-				}
-			});
-		}
+				});
+			}else{
+				woocv.isDisabled = false;
+			}
+		}, 300);
 		this.sortableData();
 	}
 });

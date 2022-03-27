@@ -21,7 +21,7 @@
     <form action="" method="post">
         <div class="wcv_contents">
             <div class="wcv_title__input">
-                <input autocomplete="off" v-model="variation_title" required type="text" id="wcv_title" placeholder="Title">
+                <input autocomplete="off" required v-model="variation_title" type="text" id="wcv_title" placeholder="Title">
             </div>
 
             <div class="woocv_enable">
@@ -37,13 +37,13 @@
                 <div class="prduct_selection">
 
                     <select v-model="productSelection.type" @change="changeProduct()" id="wcv_product_selection">
-                        <option value="single">Single Product</option>
-                        <option value="multiple">Multiple Product</option>
+                        <option value="products">Products</option>
+                        <option value="category">Category</option>
                     </select>
 
-                    <div  v-show="productSelection.type === 'single'" class="products_list">
-                        <select required v-model="productSelection.data[0]" class="wcv_products">
-                            <option value="">Select Product</option>
+                    <div v-if="productSelection.type === 'products'" class="products_list">
+                        <select multiple required v-model="productSelection.products" class="wcv_products">
+                            <option value="">Select Products</option>
                             <?php
                                 $product_ids = wc_get_products( array( 'return' => 'ids', 'limit' => -1 ) );
                                 if(sizeof($product_ids) > 0){
@@ -55,15 +55,25 @@
                         </select>
                     </div>
 
-                    <div v-show="productSelection.type === 'multiple'" class="products_list">
-                        <select required v-show="productSelection.type === 'multiple'" multiple v-model="productSelection.data" class="wcv_products">
+                    <div v-if="productSelection.type === 'category'" class="products_list">
+                        <select v-model="productSelection.category" id="variation_product_category">
+                            <option value="">Select category</option>
                             <?php
-                                $product_ids = wc_get_products( array( 'return' => 'ids', 'limit' => -1 ) );
-                                if(sizeof($product_ids) > 0){
-                                    foreach($product_ids as $product_id){
-                                        _e('<option value="'.$product_id.'">'.ucfirst(get_the_title($product_id)).'</option>', 'woocv');
-                                    }
+                            $orderby = 'name';
+                            $order = 'asc';
+                            $hide_empty = false ;
+                            $cat_args = array(
+                                'orderby'    => $orderby,
+                                'order'      => $order,
+                                'hide_empty' => $hide_empty,
+                            );
+                             
+                            $product_categories = get_terms( 'product_cat', $cat_args );
+                            if( $product_categories ) {
+                                foreach ( $product_categories as $term ) {
+                                    echo '<option value="'.$term->term_id.'">'.$term->name.'</option>';
                                 }
+                            }
                             ?>
                         </select>
                     </div>
@@ -100,7 +110,7 @@
                                 <li v-for="fitem in field.fieldsData" :key="fitem.id" v-bind:data-id="fitem.id" class="woocv_filed_item datanone">
                                     <div class="f__data">
                                         <div class="field_item_head">
-                                            <h3 class="item_name">{{get_itemTypeFullText(fitem.type)}}</h3>
+                                            <h3 class="item_name">{{fitem.label}}</h3>
                                             
                                             <div class="fitemActions">
                                                 <div @click="collapsable_elements('fieldItem', event)" class="collapsable_btn">
@@ -136,6 +146,25 @@
                                                     <div v-if="fitem.type === 'color_input'" class="woocv_inputData">
                                                         <input class="item_value" type="text" v-model="fitem.label" placeholder="Label text">
                                                         <input type="text" placeholder="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="fitem.price" class="item_price">
+
+                                                        <div class="available_colors">
+                                                            <p class="availablecolor_heading">Available Colors</h3>
+                                                            <div class="woocv_colors">
+
+                                                                <div v-for="(color, ind) in fitem.availableColors" :key="ind" :style="{ backgroundColor: color.value }" class="woocv_color">
+                                                                    <span @click="remove_availableColor(field.id, fitem.id, color.id)" class="woocv_color_remove"><i class="fas fa-times-circle"></i></span>
+                                                                </div>
+
+                                                                <div class="nofield" v-if="fitem.availableColors.length === 0">No colors added!</div>
+
+                                                            </div>
+                                                            
+                                                            <div class="colorSelectionBox">
+                                                                <input type="color" class="newColor">
+                                                                <button @click="addAvailableColor(field.id, fitem.id, event)" class="colorAddbtn">Add</button>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                     <div v-if="fitem.type === 'button_show'" class="woocv_inputData">
                                                         <input class="item_value" type="text" v-model="fitem.label" placeholder="Button text">

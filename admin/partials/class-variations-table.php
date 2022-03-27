@@ -28,20 +28,7 @@ class Variations_List extends WP_List_Table
         $data = array_slice($data, (($currentPage - 1) * $perPage), $perPage);
         $this->_column_headers = array($columns, $hidden, $sortable);
 
-        $search = (isset($_REQUEST['s'])) ? $_REQUEST['s'] : false;
-        if (!empty($search)) {
-            global $wpdb;
-
-            try {
-                $order = [];
-                $this->items = $order;
-            } catch (\Throwable$th) {
-                //throw $th;
-            }
-
-        } else {
-            $this->items = $data;
-        }
+        $this->items = $data;
 
     }
 
@@ -52,21 +39,6 @@ class Variations_List extends WP_List_Table
             $variations = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}custom_variations", ARRAY_A);
             if (sizeof($variations) > 0) {
                 return $variations;
-            } else {
-                return array();
-            }
-        } catch (\Throwable$th) {
-            //throw $th;
-        }
-    }
-
-    public function get_cv_fields($variation_id)
-    {
-        try {
-            global $wpdb;
-            $fields = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}variation_fields WHERE variation_id = $variation_id", ARRAY_A);
-            if (sizeof($fields) > 0) {
-                return $fields;
             } else {
                 return array();
             }
@@ -127,65 +99,48 @@ class Variations_List extends WP_List_Table
     private function table_data()
     {
         $data = array();
+        global $wpdb;
 
-        $variations = $this->get_cv_results();
-        if (sizeof($variations) > 0) {
-            foreach ($variations as $variation) {
-                $variation_id = intval($variation['variation_id']);
-                $variation_title = $variation['variation_title'];
-                $category_id = $variation['product_category'];
-                $save_products = $variation['product_ids'];
-                $show_infront = $variation['show_infront'];
-                $show_infront = (intval($show_infront) === 1 ? 'Enabled' : 'Disabled');
-                $create_date = $variation['create_date'];
-                $product_counts = 0;
+		$results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}woocv_variations");
+		if($results){
+            foreach($results as $result){
+                $variation_id = $result->variation_id;
+                $show_infront = $result->show_infront;
+                switch ($show_infront) {
+                    case 'true':
+                        $show_infront = "Enabled";
+                        break;
+                    case true:
+                        $show_infront = "Enabled";
+                        break;
+                    default:
+                        $show_infront = "Disabled";
+                        break;
+                }
+                $variation_title = $result->variation_title;
+                $category = $result->category;
+                $products = unserialize($result->product_ids);
+                $fields_data = $result->fields_data;
+                $create_date = $result->create_date;
 
-                $fields = $this->get_cv_fields($variation_id);
-                $size_of_fields = sizeof($fields);
-
-                $product_category = 'Specified Products';
-                if ( $category_id != 0 && $term = get_term_by('id', $category_id, 'product_cat')) {
-                    $product_category = ucfirst($term->name);
-                    $args = [
-                        'post_type' => 'product',
-                        'tax_query' => array(
-                            array(
-                                'taxonomy' => 'product_cat',
-                                'terms' => $category_id,
-                                'include_children' => false
-                            )
-                        ),
-                        'fields'  => 'ids',
-                        'numberposts' => -1,
-                        'post_status' => 'publish',
-                    ];
-    
-                    $product_ids = get_posts( $args );
-
-                    $product_counts = sizeof($product_ids);
+                $fields = [];
+                if($fields_data){
+                    $fields = unserialize(base64_decode($fields_data));
                 }
 
-                if($save_products){
-                    $parr = unserialize($save_products);
-                    if(is_array($parr)){
-                        $product_counts = count($parr);
-                    }
-                }
-
-                $variation_arr = array(
+                $fieldArr = array(
                     'variation_id' => $variation_id,
                     'variation_title' => $variation_title,
-                    'product_category' => $product_category,
-                    'product_counts' => $product_counts,
+                    'product_category' => (($category) ? get_the_category_by_ID($category) : 'Specified Products'),
+                    'product_counts' => ((is_array($products)) ? sizeof($products) : 0),
                     'show_infront' => $show_infront,
-                    'size_of_fields' => $size_of_fields,
-                    'create_date' => $create_date,
+                    'size_of_fields' => ((is_array($fields)) ? sizeof($fields) : 0),
+                    'create_date' => date("d/m/Y h:i A", strtotime($create_date)),
                 );
-
-                array_push($data, $variation_arr);
+                
+                $data[] = $fieldArr;
             }
-        }
-
+		}
         return $data;
     }
 
@@ -251,15 +206,11 @@ class Variations_List extends WP_List_Table
                 if(is_array($_REQUEST['variation'])){
                     $ids = $_REQUEST['variation'];
                     foreach($ids as $variation_id){
-                        if($wpdb->query("DELETE FROM {$wpdb->prefix}variation_fields WHERE variation_id = $variation_id")){
-                            $wpdb->query("DELETE FROM {$wpdb->prefix}custom_variations WHERE variation_id = $variation_id");
-                        }
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}woocv_variations WHERE variation_id = $variation_id");
                     }
                 }else{
                     $variation_id = intval($_REQUEST['variation']);
-                    if($wpdb->query("DELETE FROM {$wpdb->prefix}variation_fields WHERE variation_id = $variation_id")){
-                        $wpdb->query("DELETE FROM {$wpdb->prefix}custom_variations WHERE variation_id = $variation_id");
-                    }
+                    $wpdb->query("DELETE FROM {$wpdb->prefix}woocv_variations WHERE variation_id = $variation_id");
                 }
             }
         }

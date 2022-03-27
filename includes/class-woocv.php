@@ -181,6 +181,22 @@ class Woocv {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'wp_head', $plugin_public, 'wp_head_scripts' );
+		
+		$this->loader->add_action( 'woocommerce_before_add_to_cart_quantity', $plugin_public, 'woocv_variations' );
+		// Custom variation fields to order
+		$this->loader->add_filter( 'woocommerce_add_cart_item_data', $plugin_public, 'woocommerce_add_cart_item_data_process', 10, 3 ); //Add custom data to cart object
+
+		$this->loader->add_filter( 'woocommerce_get_item_data', $plugin_public, 'woocv_get_item_data', 10, 2 ); ///Display the custom WooCommerce meta data in the cart
+
+		$this->loader->add_action( 'woocommerce_checkout_create_order_line_item', $plugin_public, 'woocv_checkout_create_order_line_item', 10, 4 ); // for order details
+
+		$this->loader->add_filter( 'woocommerce_order_item_name', $plugin_public, 'woocv_order_item_name', 99, 2 ); //Adding WooCommerce custom meta data to emails & Invoice
+
+		$this->loader->add_action( 'woocommerce_before_calculate_totals', $plugin_public, 'calculate_final_woocv_prices', 99 ); //Change price
+
+		$this->loader->add_action( 'wp_ajax_get_woo_price', $plugin_public, 'get_woo_price' );
+		$this->loader->add_action( 'wp_ajax_nopriv_get_woo_price', $plugin_public, 'get_woo_price' );
 	}
 
 	/**
