@@ -60,75 +60,89 @@ $data = $variation_data['data'];
                             foreach($cleanFields as $field_type => $field_items){
                                 switch ($field_type) {
                                     case 'empty_input':
-                                        foreach($field_items as $fitem){
-                                            $item_id = $fitem['id'];
-                                            $item_label = $fitem['label'];
-                                            $item_placeholder = $fitem['placeholder'];
-                                            $item_price = $fitem['price'];
-                                            ?>
-                                            <div class="wcv_empty_field">
-                                                <label for="<?php echo $item_id ?>"><?php echo $item_label ?></label>
-                                                <input data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" name="woocv_inputs[<?php echo $fieldId ?>][<?php echo $item_id ?>]" id="<?php echo $item_id ?>" type="text" placeholder="<?php echo $item_placeholder ?>">
-                                            </div>
-                                        <?php
+                                        if(is_array($field_items)){
+                                            foreach($field_items as $fitem){
+                                                $item_id = $fitem['id'];
+                                                $item_label = $fitem['label'];
+                                                $item_placeholder = $fitem['placeholder'];
+                                                $item_price = $fitem['price'];
+                                                ?>
+                                                <div class="wcv_empty_field">
+                                                    <label for="<?php echo $item_id ?>"><?php echo $item_label ?></label>
+                                                    <input data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" name="woocv_inputs[<?php echo $fieldId ?>][<?php echo $item_id ?>]" id="<?php echo $item_id ?>" type="text" placeholder="<?php echo $item_placeholder ?>">
+                                                </div>
+                                            <?php
+                                            }
                                         }
                                         break;
                                     case 'color_input':
-                                        foreach($field_items as $fitem){
-                                            $item_id = $fitem['id'];
-                                            $item_label = $fitem['label'];
-                                            $item_availableColors = $fitem['availableColors'];
-                                            $item_availableColors = wp_list_pluck( $item_availableColors, 'value' );
-                                            $item_availableColors = implode(",", $item_availableColors);
-                                            $item_price = $fitem['price'];
-                                            ?>
-                                            <div class="wcv_color_field">
-                                                <label><?php echo $item_label ?></label>
-                                                <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" data-support="<?php echo $item_availableColors ?>" class="woocv_color_input"></button>
-                                                <span class="clearColor">Clear</span>
-                                                <input type="hidden" class="color_input_v" value="" name="woocv_inputs[<?php echo $fieldId ?>][<?php echo $item_id ?>]" id="<?php echo $item_id ?>">
-                                            </div>
-                                            <?php
+                                        if(is_array($field_items)){
+                                            foreach($field_items as $fitem){
+                                                $item_id = $fitem['id'];
+                                                $item_label = $fitem['label'];
+
+                                                if(array_key_exists('availableColors', $fitem)){
+                                                    $item_availableColors = $fitem['availableColors'];
+                                                    $item_availableColors = wp_list_pluck( $item_availableColors, 'value' );
+                                                    $item_availableColors = implode(",", $item_availableColors);
+                                                    $item_price = $fitem['price'];
+
+                                                    ?>
+                                                    <div class="wcv_color_field">
+                                                        <label><?php echo $item_label ?></label>
+                                                        <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" data-support="<?php echo $item_availableColors ?>" class="woocv_color_input"></button>
+                                                        <span class="clearColor">Clear</span>
+                                                        <input type="hidden" class="color_input_v" value="" name="woocv_inputs[<?php echo $fieldId ?>][<?php echo $item_id ?>]" id="<?php echo $item_id ?>">
+                                                    </div>
+                                                    <?php
+                                                }
+                                            }
                                         }
                                         break;
                                     case 'button_show':
                                         echo '<div class="wcv_btn_fields">';
-                                        foreach($field_items as $fitem){
-                                            $item_id = $fitem['id'];
-                                            $item_label = $fitem['label'];
-                                            $item_price = $fitem['price'];
-                                            ?>
-                                            <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" class="woocv_btns woocv_text_btn"><?php echo $item_label ?></button>
-                                            <?php
+                                        if(is_array($field_items)){
+                                            foreach($field_items as $fitem){
+                                                $item_id = $fitem['id'];
+                                                $item_label = $fitem['label'];
+                                                $item_price = $fitem['price'];
+                                                ?>
+                                                <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" class="woocv_btns woocv_text_btn"><?php echo $item_label ?></button>
+                                                <?php
+                                            }
                                         }
                                         echo '<input type="hidden" data-tempid="'.time().'" class="btnInpValue" name="woocv_inputs['.$fieldId.']['.$item_id.']" value=""></div>';
                                         break;
                                     case 'color_show':
                                         echo '<div class="wcv_color_btn_fields">';
-                                        foreach($field_items as $fitem){
-                                            $item_id = $fitem['id'];
-                                            $item_label = $fitem['label'];
-                                            $item_color = $fitem['color'];
-                                            $item_price = $fitem['price'];
-                                            ?>
-                                            
-                                            <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" style="<?php echo 'background-color: '.$item_color ?>" class="woocv_btns woocv_color_btn"><?php echo $item_label ?></button>
-                                            <?php
+                                        if(is_array($field_items)){
+                                            foreach($field_items as $fitem){
+                                                $item_id = $fitem['id'];
+                                                $item_label = $fitem['label'];
+                                                $item_color = $fitem['color'];
+                                                $item_price = $fitem['price'];
+                                                ?>
+                                                
+                                                <button data-id="<?php echo $item_id ?>" data-price="<?php echo $item_price ?>" style="<?php echo 'background-color: '.$item_color ?>" class="woocv_btns woocv_color_btn"><?php echo $item_label ?></button>
+                                                <?php
+                                            }
                                         }
                                         echo '<input type="hidden" data-tempid="'.(time()+1000).'" class="colorInpValue" name="woocv_inputs['.$fieldId.']['.$item_id.']" value=""></div>';
                                         break;
                                     case 'longtext_field':
-                                        foreach($field_items as $fitem){
-                                            $item_id = $fitem['id'];
-                                            $item_label = $fitem['label'];
-                                            $item_longtxt = $fitem['longtxt'];
-                                            
-                                            ?>
-                                            <div class="wcv_texts_fields">
-                                                <h3 class="text_title"><?php echo stripcslashes($item_label) ?></h3>
-                                                <p><?php echo stripslashes($item_longtxt) ?></p>
-                                            </div>
-                                            <?php
+                                        if(is_array($field_items)){
+                                            foreach($field_items as $fitem){
+                                                $item_id = $fitem['id'];
+                                                $item_label = $fitem['label'];
+                                                $item_longtxt = $fitem['longtxt'];
+                                                
+                                                ?>
+                                                <div class="wcv_texts_fields">
+                                                    <h3 class="text_title"><?php echo stripcslashes($item_label) ?></h3>
+                                                    <p><?php echo stripslashes($item_longtxt) ?></p>
+                                                </div>
+                                                <?php
+                                            }
                                         }
                                         break;
                                 }

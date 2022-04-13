@@ -167,7 +167,7 @@ class Woocv_Public {
 			if ( $product->get_price() > 0 ) {
 
 				$regular_price = $product->get_regular_price();
-				$sale_price = $product->get_sale_price();
+				$sale_price = $product->get_price();
 
 				if($sale_price){
 					$sale_price += $custom_price;
@@ -310,15 +310,16 @@ class Woocv_Public {
 				$woocv_costs += $vdata['price'];
 			}
 
+			$product = wc_get_product( $product_id );
+			$price = $product->get_price();
+
 			$woo_variation_price = 0;
 			if(!empty($variation_id)){
 				$variable_product = wc_get_product($variation_id);
 				$woo_variation_price = floatval($variable_product->get_price());
+				$price = $woo_variation_price;
 			}
-
-			$product = wc_get_product( $product_id );
-			$price = $product->get_price();
-			$price = $price+$woo_variation_price;
+			
 			$price = $price+$woocv_costs;
 
 			$cart_item_data['woocv_price'] = $price;
