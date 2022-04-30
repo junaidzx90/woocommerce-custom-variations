@@ -70,7 +70,7 @@ class Woocv {
 		if ( defined( 'WOOCV_VERSION' ) ) {
 			$this->version = WOOCV_VERSION;
 		} else {
-			$this->version = '1.0.1';
+			$this->version = '1.0.2';
 		}
 		$this->plugin_name = 'woocv';
 

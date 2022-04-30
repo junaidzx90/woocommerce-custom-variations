@@ -65,32 +65,30 @@ jQuery(function( $ ) {
 		});
 	});
 
+	$('.colorInpValue').minicolors({defaultValue:''});
+
 	// Color button select
-	$(document).find(".woocv_color_btn").each(function(){
-		$(this).on("click", function(){
-			$(this).siblings(".woocv_color_btn.active").removeClass("active");
-			$(this).toggleClass("active");
-			let itemId = $(this).parent().find(".woocv_color_btn.active").data("id");
-			$(this).parent().find("input.colorInpValue").val(itemId);
-
-			let tempid = $(this).parent().find("input.colorInpValue").data("tempid");
-			prices = prices.filter(function(el){
-				return el.id !== tempid;
-			});
-
-			let p = $(this).parent().find(".woocv_color_btn.active").data("price");
+	$(document).find(".colorInpValue").on("input", function(){
+		let itemId = $(this).data("tempid");
+		
+		prices = prices.filter(function(el){
+			return el.id !== itemId;
+		});
+		
+		if($(this).val() !== ""){
+			let p = $(this).data("price");
 			if(itemId !== undefined){
 				let price = {
-					id: tempid,
+					id: itemId,
 					price: ((p) ? parseFloat(p) : 0)
 				}
 				prices.push(price);
 			}
-		});
+		}
 	});
 
 	// User color choose
-	$(document).find(".woocv_color_input").each(function(){
+	$(document).find(".woocv_available_color").each(function(){
 		let colors = $(this).data("support");
 		colors = colors.split(",");
 		$(this).removeAttr("data-support");
@@ -102,12 +100,12 @@ jQuery(function( $ ) {
 			'paletteLabel': 'Available Colors',
 			'palette': colors,
 			'onColorSelected': function() {
-				let itemValue = $(this.element).parent().find("input.color_input_v");
+				let itemValue = $(this.element).parent().find("input.available_color_v");
 				itemValue.val(this.color);
 				this.element.css({'backgroundColor': this.color, 'color': this.color});
 				let id = $(this.element).data("id").toString();
 				let cp = $(this.element).data("price");
-				if($(this.element).parent().find("input.color_input_v").val() !== ""){
+				if($(this.element).parent().find("input.available_color_v").val() !== ""){
 					let price = {
 						id: id,
 						price: ((cp) ? parseFloat(cp) : 0)
@@ -123,9 +121,9 @@ jQuery(function( $ ) {
 
 	$(document).find(".clearColor").each(function(){ // Clear selected color
 		$(this).on("click", function(){
-			$(this).parent().find("input.color_input_v").val("");
-			$(this).parent().find(".woocv_color_input").css({'backgroundColor': "#f6f6f6"});
-			let fid = $(this).parent().find(".woocv_color_input").data("id").toString();
+			$(this).parent().find("input.available_color_v").val("");
+			$(this).parent().find(".woocv_available_color").css({'backgroundColor': "#f6f6f6"});
+			let fid = $(this).parent().find(".woocv_available_color").data("id").toString();
 			prices = prices.filter(function(el){
 				return el.id !== fid;
 			});

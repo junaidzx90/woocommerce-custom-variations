@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'WOOCV_VERSION', '1.0.1' );
+define( 'WOOCV_VERSION', '1.0.2' );
 date_default_timezone_set(get_option('timezone_string')?get_option('timezone_string'):'UTC');
 /**
  * The code that runs during plugin activation.

@@ -129,9 +129,9 @@
                                                     <select @change="changeFieldType(field.id, fitem.id)" v-model="fitem.type" id="inputTypeSelect">
                                                         <option value="unselected">Select type</option>
                                                         <option value="empty_input">Empty Input</option>
-                                                        <option value="color_input">Color Input</option>
+                                                        <option value="available_color">Available Colors</option>
                                                         <option value="button_show">Button Show</option>
-                                                        <option value="color_show">Color Show</option>
+                                                        <option value="color_select">Color Select</option>
                                                         <option value="longtext_field">Long Text</option>
                                                     </select>
                                                 </div>
@@ -143,7 +143,7 @@
                                                         <input class="item_value" type="text" v-model="fitem.placeholder" placeholder="Input Placeholder">
                                                         <input type="text" placeholder="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="fitem.price" class="item_price">
                                                     </div>
-                                                    <div v-if="fitem.type === 'color_input'" class="woocv_inputData">
+                                                    <div v-if="fitem.type === 'available_color'" class="woocv_inputData">
                                                         <input class="item_value" type="text" v-model="fitem.label" placeholder="Label text">
                                                         <input type="text" placeholder="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="fitem.price" class="item_price">
 
@@ -170,9 +170,7 @@
                                                         <input class="item_value" type="text" v-model="fitem.label" placeholder="Button text">
                                                         <input type="text" placeholder="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="fitem.price" class="item_price">
                                                     </div>
-                                                    <div v-if="fitem.type === 'color_show'" class="woocv_inputData">
-                                                        <input type="color" v-model="fitem.color" id="inputColorshow" value="#000000">
-                                                        <input class="item_value" type="text" v-model="fitem.label" placeholder="Color name">
+                                                    <div v-if="fitem.type === 'color_select'" class="woocv_inputData">
                                                         <input type="text" placeholder="Price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" v-model="fitem.price" class="item_price">
                                                     </div>
                                                     <div v-if="fitem.type === 'longtext_field'" class="woocv_inputData">

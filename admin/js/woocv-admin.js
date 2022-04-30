@@ -34,7 +34,7 @@ const woocv = new Vue({
 					type: "unselected",
 					label: "Untitled",
 					placeholder: "",
-					color: "#000000",
+					// color: "#000000",
 					availableColors: [],
 					price: "",
 					longtxt: ""
@@ -73,10 +73,11 @@ const woocv = new Vue({
 			let field = this.woocvFields.find(el => el['id'] === fid);
 			if (field !== undefined) {
 				let fieldItem = field.fieldsData.find(el => el['id'] === fiid);
+				
 				if (fieldItem !== undefined) {
-					fieldItem.label = "Untitled";
+					fieldItem.label = ((fieldItem.type === 'color_select') ? 'Color Select' : "Untitled");
 					fieldItem.placeholder = "";
-					fieldItem.color = "#000000";
+					// fieldItem.color = "#000000";
 					fieldItem.price = "";
 					fieldItem.longtxt = "";
 				}
@@ -243,36 +244,43 @@ const woocv = new Vue({
 					success: function (response) {
 						if (response.success) {
 							let data = response.success;
-
-							data.fields_data.forEach(element => {
-								let fdata = [];
-								element.fieldsData.forEach(dataItem => {
-									let singular = {
-										id: dataItem.id,
-										type: ((dataItem.type !== undefined) ? dataItem.type : "unselected"),
-										label: ((dataItem.label !== undefined) ? dataItem.label : "Untitled"),
-										placeholder: ((dataItem.placeholder !== undefined) ? dataItem.placeholder : ""),
-										color: ((dataItem.color !== undefined) ? dataItem.color : "#000000"),
-										availableColors: ((dataItem.availableColors !== undefined) ? dataItem.availableColors : []),
-										price: ((dataItem.price !== undefined) ? dataItem.price : ""),
-										longtxt: ((dataItem.longtxt !== undefined) ? dataItem.longtxt : ""),
+							if(data.fields_data.length > 0 ){
+								data.fields_data.forEach(element => {
+									if(element){
+										let fdata = [];
+										if(element.fieldsData !== undefined){
+											element.fieldsData.forEach(dataItem => {
+												let singular = {
+													id: dataItem.id,
+													type: ((dataItem.type !== undefined) ? dataItem.type : "unselected"),
+													label: ((dataItem.label !== undefined) ? dataItem.label : "Untitled"),
+													placeholder: ((dataItem.placeholder !== undefined) ? dataItem.placeholder : ""),
+													// color: ((dataItem.color !== undefined) ? dataItem.color : "#000000"),
+													availableColors: ((dataItem.availableColors !== undefined) ? dataItem.availableColors : []),
+													price: ((dataItem.price !== undefined) ? dataItem.price : ""),
+													longtxt: ((dataItem.longtxt !== undefined) ? dataItem.longtxt : ""),
+												}
+			
+												fdata.push(singular)
+											});
+			
+											let woocv_field = {
+												id: element.id,
+												title: element.title,
+												fieldsData: fdata
+											}
+			
+											woocv.woocvFields.push(woocv_field);
+										}
+										
 									}
-
-									fdata.push(singular)
 								});
-
-								let woocv_field = {
-									id: element.id,
-									title: element.title,
-									fieldsData: fdata
-								}
-
-								woocv.woocvFields.push(woocv_field);
-							})
-
-							woocv.productSelection = data.products;
-							woocv.variation_switch = data.switch;
-							woocv.variation_title = data.variation_title;
+	
+								woocv.productSelection = data.products;
+								woocv.variation_switch = data.switch;
+								woocv.variation_title = data.variation_title;
+							}
+							
 						}
 						woocv.isDisabled = false;
 					}

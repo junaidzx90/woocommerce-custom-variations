@@ -73,6 +73,7 @@ class Woocv_Public {
 		 * class.
 		 */
 		wp_enqueue_style( 'colorPick', plugin_dir_url( __FILE__ ) . 'css/colorPick.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'microcolor', plugin_dir_url( __FILE__ ) . 'css/jquery.minicolors.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/woocv-public.css', array(), $this->version, 'all' );
 
 	}
@@ -96,6 +97,7 @@ class Woocv_Public {
 		 * class.
 		 */
 		wp_enqueue_script( 'colorPick', plugin_dir_url( __FILE__ ) . 'js/colorPick.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'jquery.minicolors', plugin_dir_url( __FILE__ ) . 'js/jquery.minicolors.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/woocv-public.js', array( 'jquery', 'colorPick' ), $this->version, true );
 		wp_localize_script($this->plugin_name, "woocv_ajax", array(
 			'ajaxurl' 		=> admin_url('admin-ajax.php'),
@@ -250,13 +252,13 @@ class Woocv_Public {
 														'type' => 'empty_input'
 													);
 													break;
-												case 'color_input':
+												case 'available_color':
 													$values[] = array(
 														'id' => $fielId,
 														'label' => $fielTitle,
 														'value' => stripslashes($itemValue),
 														'price' => floatval($fdata['price']),
-														'type' => 'color_input'
+														'type' => 'available_color'
 													);
 													break;
 												case 'button_show':
@@ -275,20 +277,14 @@ class Woocv_Public {
 													}
 													
 													break;
-												case 'color_show':
-													$fieldId = intval($itemValue);
-													$colorsFieldIndex = array_search($fieldId, array_column($fieldata, 'id'));
-													
-													if($colorsFieldIndex || $colorsFieldIndex == "0"){
-														$currentField = $fieldata[$colorsFieldIndex];
-														
+												case 'color_select':
+													if($itemValue){
 														$values[] = array(
 															'id' => $fielId,
 															'label' => $fielTitle,
-															'value' => $currentField['color'],
-															'name' => $currentField['label'],
-															'price' => floatval($currentField['price']),
-															'type' => 'color_show'
+															'value' => $itemValue,
+															'price' => floatval($fdata['price']),
+															'type' => 'color_select'
 														);
 													}
 													
@@ -339,11 +335,11 @@ class Woocv_Public {
 				$value = $field['value'];
 
 				switch ($type) {
-					case 'color_input':
+					case 'available_color':
 						$value = ucfirst($readColor->name($value)['name']);
 						break;
-					case 'color_show':
-						$value = $field['name'];
+					case 'color_select':
+						$value = ucfirst($readColor->name($value)['name']);
 						break;
 					default:
 						$value = $field['value'];
@@ -377,11 +373,11 @@ class Woocv_Public {
 				$value = $field['value'];
 
 				switch ($type) {
-					case 'color_input':
+					case 'available_color':
 						$value = ucfirst($readColor->name($value)['name']);
 						break;
-					case 'color_show':
-						$value = $field['name'];
+					case 'color_select':
+						$value = ucfirst($readColor->name($value)['name']);
 						break;
 					default:
 						$value = $field['value'];
@@ -413,11 +409,11 @@ class Woocv_Public {
 				$value = $field['value'];
 
 				switch ($type) {
-					case 'color_input':
+					case 'available_color':
 						$value = ucfirst($readColor->name($value)['name']);
 						break;
-					case 'color_show':
-						$value = $field['name'];
+					case 'color_select':
+						$value = ucfirst($readColor->name($value)['name']);
 						break;
 					default:
 						$value = $field['value'];

@@ -56,7 +56,7 @@ span.collapse_icon{
     display: flex;
     flex-direction: column;
 }
-.wcv_field .wcv_field_items input {
+.wcv_field .wcv_field_items input[type="text"], .wcv_field .wcv_field_items input[type='number'] {
     padding: 9px;
     border: 1px solid #ddd;
     border-radius: 3px;
@@ -76,7 +76,7 @@ span.collapse_icon{
     flex-wrap: wrap;
     gap: 5px;
 }
-button.woocv_btns,button.woocv_color_input, button.calculate_woocv_total {
+button.woocv_btns,button.woocv_available_color, button.calculate_woocv_total {
     min-width: 50px;
     min-height: 28px;
     cursor: pointer;
@@ -105,7 +105,7 @@ span.clearColor {
     border-radius: 3px;
     color: red;
 }
-button.woocv_color_input:hover{
+button.woocv_available_color:hover{
     transform: scale(1.05); 
 }
 button.calculate_woocv_total{
